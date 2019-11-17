@@ -10,7 +10,7 @@ from __future__ import absolute_import
 import codecs
 import ctypes
 import json
-import re
+import os
 
 from textblob.compat import PY2, request, urlencode
 from textblob.exceptions import TranslatorError, NotTranslated
@@ -18,46 +18,15 @@ from textblob.exceptions import TranslatorError, NotTranslated
 
 class Translator(object):
 
-    """A language translator and detector.
-
-    Usage:
-    ::
-        >>> from textblob.translate import Translator
-        >>> t = Translator()
-        >>> t.translate('hello', from_lang='en', to_lang='fr')
-        u'bonjour'
-        >>> t.detect("hola")
-        u'es'
-    """
-
-    url = "http://translate.google.com/translate_a/t?client=webapp&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&dt=at&ie=UTF-8&oe=UTF-8&otf=2&ssel=0&tsel=0&kc=1"
-
-    headers = {
-        'Accept': '*/*',
-        'Connection': 'keep-alive',
-        'User-Agent': (
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) '
-            'AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')
-    }
-
-    def translate(self, source, from_lang='auto', to_lang='en', host=None, type_=None):
-        """Translate the source text from one language to another."""
-        if PY2:
-            source = source.encode('utf-8')
-        data = {"q": source}
-        url = u'{url}&sl={from_lang}&tl={to_lang}&hl={to_lang}&tk={tk}'.format(
-            url=self.url,
-            from_lang=from_lang,
-            to_lang=to_lang,
-            tk=_calculate_tk(source),
-        )
-        response = self._request(url, host=host, type_=type_, data=data)
-        result = json.loads(response)
-        if isinstance(result, list):
-            try:
-                result = result[0]  # ignore detected language
-            except IndexError:
-                pass
+    def translate(self, source, from_lang='en', to_lang='ru'):
+        if from_lang == to_lang:
+            raise AssertionError
+        if from_lang != os.environ["TRANSLATE_FROM_LANGUAGE"]:
+            raise AssertionError
+        result = self._client.translate(
+            values=[source],
+            target_language=to_lang,
+            source_language=from_lang)[0].get("translatedText")
         self._validate_translation(source, result)
         return result
 

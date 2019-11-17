@@ -18,6 +18,8 @@ import platform
 import string
 import getpass
 
+os.environ["TRANSLATE_FROM_LANGUAGE"] = "en"
+
 sys.path.insert(0, os.path.join(mw.pm.addonFolder(), "kind2anki"))
 sys.path.insert(0, os.path.join(mw.pm.addonFolder(), "kind2anki", "kind2anki"))
 sys.path.insert(0, os.path.join(mw.pm.addonFolder(), "kind2anki", "kind2anki", "libs"))

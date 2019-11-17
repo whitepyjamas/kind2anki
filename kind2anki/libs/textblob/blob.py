@@ -21,6 +21,8 @@ Example usage: ::
     These classes are now imported from ``textblob`` rather than ``text.blob``.
 """
 from __future__ import unicode_literals, absolute_import
+
+import os
 import sys
 import json
 from collections import defaultdict
@@ -544,7 +546,7 @@ class BaseBlob(StringlikeMixin, BlobComparableMixin):
         :rtype: :class:`BaseBlob <BaseBlob>`
         """
         return self.__class__(self.translator.translate(self.raw,
-                              from_lang=from_lang, to_lang=to))
+                              from_lang=os.environ["TRANSLATE_FROM_LANGUAGE"], to_lang=to))
 
     def detect_language(self):
         """Detect the blob's language using the Google Translate API.

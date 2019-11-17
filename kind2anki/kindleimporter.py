@@ -4,13 +4,9 @@ import sys
 import os
 import tempfile
 import codecs
-import json
-import urllib
 import datetime
 import time
-from urllib.parse import quote
 
-from aqt import mw
 from functools import partial
 
 
@@ -60,7 +56,10 @@ class KindleImporter():
     def getWordsFromDB(self):
         conn = sqlite3.connect(self.db_path)
         c = conn.cursor()
-        c.execute("SELECT word, id FROM words WHERE timestamp > ?",
+        c.execute(f"SELECT word, id "
+                  f"FROM words "
+                  f"WHERE lang IS '{os.environ['TRANSLATE_FROM_LANGUAGE']}' "
+                  f"AND timestamp > ?",
                   (str(self.timestamp),))
         words_and_ids = c.fetchall()
         self.words = [w[0] for w in words_and_ids]
@@ -84,10 +83,7 @@ class KindleImporter():
                     translated_word += usage.replace(";", ",") + "<hr>"
 
             if self.doTranslate:
-                try:
-                    translated_word += translate(word)
-                except:
-                    translated_word += "cannot translate"
+                translated_word += translate(word)
 
             translated.append(translated_word)
 
