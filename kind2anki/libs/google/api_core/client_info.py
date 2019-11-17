@@ -23,7 +23,7 @@ import platform
 import pkg_resources
 
 _PY_VERSION = platform.python_version()
-_API_CORE_VERSION = pkg_resources.get_distribution("google-api-core").version
+_API_CORE_VERSION = "1.14.3"
 
 try:
     _GRPC_VERSION = pkg_resources.get_distribution("grpcio").version

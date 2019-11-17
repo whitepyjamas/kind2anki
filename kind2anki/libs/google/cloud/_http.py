@@ -29,7 +29,7 @@ API_BASE_URL = "https://www.googleapis.com"
 """The base of the API call URL."""
 
 DEFAULT_USER_AGENT = "gcloud-python/{0}".format(
-    get_distribution("google-cloud-core").version
+    "1.0.3"
 )
 """The user agent for google-cloud-python requests."""
 
