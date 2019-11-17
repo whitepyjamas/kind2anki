@@ -19,6 +19,7 @@ import platform
 import string
 import getpass
 
+os.environ["TRANSLATE_FROM_LANGUAGE"] = "en"
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] =\
     realpath(
         os.path.join(

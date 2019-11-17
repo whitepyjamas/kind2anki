@@ -9,6 +9,7 @@ from __future__ import absolute_import
 
 import ctypes
 import json
+import os
 
 from google.cloud import translate_v2 as translate
 from textblob.compat import PY2, request, urlencode
@@ -18,8 +19,15 @@ class Translator(object):
     def __init__(self):
         self._client = translate.Client()
 
-    def translate(self, source, from_lang='auto', to_lang='en'):
-        result = self._client.translate(values=source, target_language=to_lang, source_language=from_lang)
+    def translate(self, source, from_lang='en', to_lang='ru'):
+        if from_lang == to_lang:
+            raise AssertionError
+        if from_lang != os.environ["TRANSLATE_FROM_LANGUAGE"]:
+            raise AssertionError
+        result = self._client.translate(
+            values=[source],
+            target_language=to_lang,
+            source_language=from_lang)[0].get("translatedText")
         self._validate_translation(source, result)
         return result
 
