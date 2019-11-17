@@ -48,6 +48,16 @@ class ThreadTranslate(QThread):
         self.done.emit(self.dialog, temp_file_path)
 
 
+def log(value):
+    f = open(os.path.realpath(
+        os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "log.txt")), "a")
+    f.write(str(value)+"\n")
+    f.close()
+    return
+
+
 # moved from class beacause it cannot work as a slot :(
 def importToAnki(dialog, temp_file_path):
     mw.progress.finish()
@@ -208,7 +218,6 @@ def getKindleVocabPath():
         return ""
     except:
         return ""
-
 
 
 action = QAction("kind2anki", mw)
