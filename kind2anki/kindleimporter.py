@@ -8,7 +8,7 @@ import datetime
 import time
 
 from functools import partial
-
+from textblob.exceptions import NotTranslated
 
 # idea taken from Syntax Highlighting for Code addon, thanks!
 try:
@@ -72,7 +72,9 @@ class KindleImporter():
             translateWord, target_language=self.target_language)
         conn = sqlite3.connect(self.db_path)
         c = conn.cursor()
-        for word, word_key in zip(self.words, self.word_keys):
+        for i in reversed(range(len(self.words))):
+            word = self.words[i]
+            word_key = self.word_keys[i]
             translated_word = ""
             if self.includeUsage:
                 c.execute("SELECT usage FROM LOOKUPS WHERE word_key = ?",
@@ -81,12 +83,13 @@ class KindleImporter():
                 for usage in usages:
                     usage = usage[0].replace(word, "<b>%s</b>" % word)
                     translated_word += usage.replace(";", ",") + "<hr>"
-
             if self.doTranslate:
-                translated_word += translate(word)
-
-            translated.append(translated_word)
-
+                try:
+                    translated_word += translate(word)
+                    translated.insert(0, translated_word)
+                except NotTranslated:
+                    self.words.pop(i)
+                    self.word_keys.pop(i)
         conn.close()
         return translated
 
