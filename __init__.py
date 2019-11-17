@@ -18,6 +18,12 @@ import string
 from sys import platform
 import getpass
 
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] =\
+    os.path.realpath(
+        os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "service-account-key.json"))
+
 sys.path.insert(0, os.path.join(mw.pm.addonFolder(), "kind2anki"))
 sys.path.insert(0, os.path.join(mw.pm.addonFolder(), "kind2anki", "kind2anki"))
 sys.path.insert(0, os.path.join(mw.pm.addonFolder(), "kind2anki", "kind2anki", "libs"))
