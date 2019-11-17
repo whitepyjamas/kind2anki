@@ -103,7 +103,7 @@ class Kind2AnkiDialog(QDialog):
                     self.mw.pm.profile.get('importMode', 1))
 
         self.daysSinceLastRun = self.getDaysSinceLastRun()
-        self.frm.importDays.setValue(self.daysSinceLastRun)
+        self.frm.importDays.setValue(41)
 
         self.exec_()
 
