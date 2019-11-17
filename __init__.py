@@ -6,6 +6,7 @@ from aqt.utils import showInfo, getFile, showText
 from aqt.qt import *
 from anki.importing import TextImporter
 from PyQt5.QtCore import QThread, pyqtSignal
+from os.path import realpath
 
 # some python libs
 import os
@@ -14,14 +15,14 @@ import sqlite3
 import urllib
 import datetime
 import time
+import platform
 import string
-from sys import platform
 import getpass
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] =\
-    os.path.realpath(
+    realpath(
         os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
+            os.path.dirname(realpath(__file__)),
             "service-account-key.json"))
 
 sys.path.insert(0, os.path.join(mw.pm.addonFolder(), "kind2anki"))
@@ -179,15 +180,8 @@ class Kind2AnkiDialog(QDialog):
 
 def getDBPath():
     global mw
-    vocab_path = getKindleVocabPath()
-    if vocab_path == "":
-        key = "Import"
-        dir = None
-    else:
-        key = None
-        dir = vocab_path
-    db_path = getFile(
-        mw, _("Select db file"), None, dir=dir, key=key, filter="*.db"
+    db_path = getKindleVocabPath() or getFile(
+        mw, _("Select db file"), None, dir=None, key="Import", filter="*.db"
     )
     if not db_path:
         raise IOError
@@ -197,24 +191,23 @@ def getDBPath():
 
 def getKindleVocabPath():
     try:
-        if platform == "win32":
+        sysm = platform.system()
+        path = None
+        if sysm == "Windows":
             for l in string.ascii_uppercase:
                 path = r"{}:\system\vocabulary\vocab.db".format(l)
                 if os.path.exists(path):
-                    return r"{}:\system\vocabulary".format(l)
-        elif platform == "darwin":
+                    break
+        elif sysm == "Darwin":
             path = "/Volumes/Kindle/system/vocabulary/vocab.db"
-            if os.path.exists(path):
-                return "/Volumes/Kindle/system/vocabulary"
-        else:
+        elif sysm == "Linux":
             user = getpass.getuser()
             path = r"/media/{}/Kindle/system/vocabulary/vocab.db".format(user)
-            if os.path.exists(path):
-                return r"/media/{}/Kindle/system/vocabulary/".format(user)
-        return ""
+        if os.path.exists(path):
+            return path
+        return None
     except:
-        return ""
-
+        return None
 
 
 action = QAction("kind2anki", mw)
