@@ -35,6 +35,8 @@ def translateWord(word, target_language):
 class KindleImporter():
     def __init__(self, db_path, target_language, includeUsage=False,
                  doTranslate=True, importDays=5):
+        self.usages = []
+        self.translated = []
         self.db_path = db_path
         self.target_language = target_language
         self.includeUsage = includeUsage
@@ -47,7 +49,7 @@ class KindleImporter():
 
     def translateWordsFromDB(self):
         self.getWordsFromDB()
-        self.translated = self.translateWords()
+        self.translateWords()
 
     def fetchWordsFromDBWithoutTranslation(self):
         self.getWordsFromDB()
@@ -67,37 +69,37 @@ class KindleImporter():
         conn.close()
 
     def translateWords(self):
-        translated = []
+        self.translated = []
+        self.usages = []
         translate = partial(
             translateWord, target_language=self.target_language)
         conn = sqlite3.connect(self.db_path)
         c = conn.cursor()
-        for i in reversed(range(len(self.words))):
-            word = self.words[i]
-            word_key = self.word_keys[i]
-            translated_word = ""
+        for word, word_key in zip(self.words, self.word_keys):
             if self.includeUsage:
-                c.execute("SELECT usage FROM LOOKUPS WHERE word_key = ?",
-                          [word_key])
-                usages = c.fetchall()
-                for usage in usages:
-                    usage = usage[0].replace(word, "<b>%s</b>" % word)
-                    translated_word += usage.replace(";", ",") + "<hr>"
+                c.execute("SELECT usage FROM LOOKUPS WHERE word_key = ?", [word_key])
+                usage = c.fetchone()[0]
+                usage = usage.replace(word, f"<b>{word}</b>")
+                usage = usage.replace(";", ",")
+                self.usages.append(usage)
+            else:
+                self.usages.append(" ")
             if self.doTranslate:
                 try:
-                    translated_word += translate(word)
-                    translated.insert(0, translated_word)
+                    self.translated.append(translate(word))
                 except NotTranslated:
-                    self.words.pop(i)
-                    self.word_keys.pop(i)
+                    self.translated.append(None)
+            else:
+                self.translated.append(None)
         conn.close()
-        return translated
+        return
 
     def createTemporaryFile(self):
         if len(self.words) == 0:
             return None
         path = os.path.join(tempfile.gettempdir(), "kind2anki_temp.txt")
         with codecs.open(path, "w", encoding="utf-8") as f:
-            for w, t in zip(self.words, self.translated):
-                f.write(u"{0};{1}\n".format(w, t))
+            for w, translated, u in zip(self.words, self.translated, self.usages):
+                if translated:
+                    f.write(f"{w};{u};{translated}\n")
         return path
