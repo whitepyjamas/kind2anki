@@ -1,0 +1,22 @@
+Metadata-Version: 2.1
+Name: yandex.dictionary
+Version: 0.1.0
+Summary: Python library for Yandex.Dictionary API.
+Home-page: https://github.com/kz20/python-yandex-dictionary
+Author: yandex.dictionary contributors
+Author-email: wdport@yahoo.com
+License: DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+Keywords: yandex yandex-dictionary dictionary
+Platform: All
+Classifier: Intended Audience :: Developers
+Classifier: Development Status :: 3 - Alpha
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3.3
+Provides: yandex_dictionary
+Requires-Dist: requests (>=1.2.3)
+
+UNKNOWN
+
+

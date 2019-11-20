@@ -1,0 +1,10 @@
+yandex.dictionary-0.1.0.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
+yandex.dictionary-0.1.0.dist-info/LICENSE,sha256=A1Ylg5HhkNwdROoBVlz-Yn_kTifa1pOgpUwkg6eyI-U,498
+yandex.dictionary-0.1.0.dist-info/METADATA,sha256=E6UZwERLugHPtVqJjTbf8AKcrhkGO2ANS37KmorV2dY,706
+yandex.dictionary-0.1.0.dist-info/RECORD,,
+yandex.dictionary-0.1.0.dist-info/WHEEL,sha256=wYBY2EO50FhAcckpWmO3c3Zwk2MALACx6lPAl6gVKnE,93
+yandex.dictionary-0.1.0.dist-info/top_level.txt,sha256=r0NJhixSMKNXpo5b0na-anb6C-KU2qOSbmcjdIUaU5Y,18
+yandex_dictionary/__init__.py,sha256=16ZUhRp6xBZEV3XpENc5vAponU4yOmhVW21cBRr4dgM,4755
+yandex_dictionary/__pycache__/__init__.cpython-37.pyc,,
+yandex_dictionary/__pycache__/tests.cpython-37.pyc,,
+yandex_dictionary/tests.py,sha256=0kQ_15n6-BGNb25O8feF6bPYttp29GJVeSi3jQo51UA,3051
