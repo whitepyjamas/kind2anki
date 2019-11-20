@@ -14,7 +14,6 @@ import os
 
 from translation import Translation, parse
 from textblob.compat import PY2, request, urlencode
-from textblob.exceptions import TranslatorError, NotTranslated
 from yandex_dictionary import YandexDictionary
 
 
@@ -37,8 +36,6 @@ class Translator(object):
         """Detect the source text's language."""
         if PY2:
             source = source.encode('utf-8')
-        if len(source) < 3:
-            raise TranslatorError('Must provide a string with at least 3 characters.')
         data = {"q": source}
         url = u'{url}&sl=auto&tk={tk}'.format(url=self.url, tk=_calculate_tk(source))
         response = self._request(url, host=host, type_=type_, data=data)

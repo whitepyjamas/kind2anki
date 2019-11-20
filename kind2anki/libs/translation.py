@@ -24,9 +24,13 @@ def parse(answer: str) -> Translation:
         raise ValueError('answer empty parse')
 
     target = parsed['def'][:3]
-    transl = [t['tr'][0]['text'] for t in target]
+    if not target:
+        raise ValueError('answer empty result')
+
+    examples = target[0]['tr'][0].get('ex')
+    translations = [t['tr'][0]['text'] for t in target]
 
     return Translation(
-        tr=transl,
-        ts=target[0]['ts'],
-        ex=target[0]['tr'][0]['ex'][0]['text'])
+        tr=translations,
+        ts=target[0].get('ts'),
+        ex=examples[0]['text'] if examples else None)

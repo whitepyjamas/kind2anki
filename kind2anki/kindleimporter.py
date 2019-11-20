@@ -8,12 +8,12 @@ import datetime
 import time
 
 from functools import partial
-from textblob.exceptions import NotTranslated
 
 # idea taken from Syntax Highlighting for Code addon, thanks!
 try:
     # Try to find the modules in the global namespace:
     from textblob import TextBlob
+    from textblob.translate import Translator
 except:
     # If not present, import modules from ./libs folder
     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -22,7 +22,7 @@ except:
 
 
 def translateWord(word, target_language):
-    return str(TextBlob(word).translate(to=target_language))
+    return TextBlob(word).translate(to=target_language)
     # """
     # translates word using transltr.org free api
     # """
@@ -35,6 +35,7 @@ def translateWord(word, target_language):
 class KindleImporter():
     def __init__(self, db_path, target_language, includeUsage=False,
                  doTranslate=True, importDays=5):
+        self.translator = Translator(os.environ["YANDEX_API_KEY"])
         self.usages = []
         self.translated = []
         self.db_path = db_path
@@ -71,23 +72,29 @@ class KindleImporter():
     def translateWords(self):
         self.translated = []
         self.usages = []
-        translate = partial(
-            translateWord, target_language=self.target_language)
         conn = sqlite3.connect(self.db_path)
         c = conn.cursor()
         for word, word_key in zip(self.words, self.word_keys):
             if self.includeUsage:
                 c.execute("SELECT usage FROM LOOKUPS WHERE word_key = ?", [word_key])
-                usage = c.fetchone()[0]
-                usage = usage.replace(word, f"<b>{word}</b>")
-                usage = usage.replace(";", ",")
-                self.usages.append(usage)
+                usages = c.fetchone()
+                if usages:
+                    usage = usages[0]
+                    usage = usage.replace(word, f"<b>{word}</b>")
+                    usage = usage.replace(";", ",")
+                    self.usages.append(usage)
+                else:
+                    self.usages.append(None)
             else:
                 self.usages.append(" ")
             if self.doTranslate:
                 try:
-                    self.translated.append(translate(word))
-                except NotTranslated:
+                    self.translated.append(
+                        self.translator.translate(
+                            source=word,
+                            to_lang=self.target_language,
+                            from_lang=os.environ["TRANSLATE_FROM_LANGUAGE"]))
+                except ValueError:
                     self.translated.append(None)
             else:
                 self.translated.append(None)
@@ -101,5 +108,10 @@ class KindleImporter():
         with codecs.open(path, "w", encoding="utf-8") as f:
             for w, translated, u in zip(self.words, self.translated, self.usages):
                 if translated:
-                    f.write(f"{w};{u};{translated}\n")
+                    ankirow = self.to_anki_line(w, translated, u)
+                    f.write(ankirow)
         return path
+
+    @staticmethod
+    def to_anki_line(word: str, translated, usage: str) -> str:
+        return f'{word};{usage or translated.ex};{translated.ts};{";".join(translated.tr)};\n'
