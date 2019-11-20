@@ -12,23 +12,26 @@ import ctypes
 import json
 import os
 
+from translation import Translation, parse
 from textblob.compat import PY2, request, urlencode
 from textblob.exceptions import TranslatorError, NotTranslated
+from yandex_dictionary import YandexDictionary
 
 
 class Translator(object):
+    def __init__(self, yandex_api_key: str):
+        self._yandex = YandexDictionary(yandex_api_key)
 
-    def translate(self, source, from_lang='en', to_lang='ru'):
+    def translate(self, source, from_lang='en', to_lang='ru') -> Translation:
         if from_lang == to_lang:
             raise AssertionError
         if from_lang != os.environ["TRANSLATE_FROM_LANGUAGE"]:
             raise AssertionError
-        result = self._client.translate(
-            values=[source],
-            target_language=to_lang,
-            source_language=from_lang)[0].get("translatedText")
-        self._validate_translation(source, result)
-        return result
+        answer = self._yandex.lookup(
+            text=source,
+            to_lang=to_lang,
+            from_lang=from_lang)
+        return parse(answer)
 
     def detect(self, source, host=None, type_=None):
         """Detect the source text's language."""
@@ -41,17 +44,6 @@ class Translator(object):
         response = self._request(url, host=host, type_=type_, data=data)
         result, language = json.loads(response)
         return language
-
-    def _validate_translation(self, source, result):
-        """Validate API returned expected schema, and that the translated text
-        is different than the original string.
-        """
-        if not result:
-            raise NotTranslated('Translation API returned and empty response.')
-        if PY2:
-            result = result.encode('utf-8')
-        if result.strip() == source.strip():
-            raise NotTranslated('Translation API returned the input string unchanged.')
 
     def _request(self, url, host=None, type_=None, data=None):
         encoded_data = urlencode(data).encode('utf-8')

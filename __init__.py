@@ -7,6 +7,8 @@ from aqt.qt import *
 from anki.importing import TextImporter
 from PyQt5.QtCore import QThread, pyqtSignal
 
+from os.path import dirname, realpath, join
+
 # some python libs
 import os
 import sys
@@ -18,7 +20,16 @@ import platform
 import string
 import getpass
 
+
+def get_yandex_api_key():
+    path = join(dirname(realpath(__file__)),
+                'yandex-dictionaries-api-key')
+    with open(path, 'r') as file:
+        return file.read()
+
+
 os.environ["TRANSLATE_FROM_LANGUAGE"] = "en"
+os.environ["YANDEX_API_KEY"] = get_yandex_api_key()
 
 sys.path.insert(0, os.path.join(mw.pm.addonFolder(), "kind2anki"))
 sys.path.insert(0, os.path.join(mw.pm.addonFolder(), "kind2anki", "kind2anki"))
@@ -203,7 +214,6 @@ def getKindleVocabPath():
         return None
     except:
         return None
-
 
 action = QAction("kind2anki", mw)
 action.triggered.connect(Kind2AnkiDialog)

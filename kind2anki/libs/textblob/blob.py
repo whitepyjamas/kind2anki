@@ -66,7 +66,7 @@ class Word(unicode):
     translation, and WordNet integration.
     """
 
-    translator = Translator()
+    translator = Translator(os.environ["YANDEX_API_KEY"])
 
     def __new__(cls, string, pos_tag=None):
         """Return a new instance of the class. It is necessary to override
@@ -360,7 +360,7 @@ class BaseBlob(StringlikeMixin, BlobComparableMixin):
     np_extractor = FastNPExtractor()
     pos_tagger = NLTKTagger()
     tokenizer = WordTokenizer()
-    translator = Translator()
+    translator = Translator(os.environ["YANDEX_API_KEY"])
     analyzer = PatternAnalyzer()
     parser = PatternParser()
 
