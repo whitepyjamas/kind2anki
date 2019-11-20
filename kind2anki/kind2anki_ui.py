@@ -45,6 +45,7 @@ class Ui_kind2ankiDialog(object):
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 1, 0, 1, 1)
         self.includeUsage = QtWidgets.QCheckBox(self.groupBox)
+        self.includeUsage.setChecked(True)
         self.includeUsage.setObjectName("includeUsage")
         self.includeUsage.setChecked(True)
         self.gridLayout.addWidget(self.includeUsage, 0, 0, 1, 1)
