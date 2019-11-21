@@ -23,13 +23,6 @@ except:
 
 def translateWord(word, target_language):
     return TextBlob(word).translate(to=target_language)
-    # """
-    # translates word using transltr.org free api
-    # """
-    # url = "http://www.transltr.org/api/translate?text=%s&to=%s"
-    # r = urllib2.urlopen(url=url % (word, target_language))
-    # r_json = r.read().decode('utf-8')
-    # return json.loads(r_json)['translationText']
 
 
 class KindleImporter():
@@ -39,7 +32,8 @@ class KindleImporter():
         self.usages = []
         self.translated = []
         self.db_path = db_path
-        self.target_language = target_language
+        self.to_lang = target_language
+        self.from_lang=os.environ["TRANSLATE_FROM_LANGUAGE"]
         self.includeUsage = includeUsage
         self.doTranslate = doTranslate
         self.timestamp = self.createTimestamp(importDays) * 1000
@@ -78,13 +72,7 @@ class KindleImporter():
             if self.includeUsage:
                 c.execute("SELECT usage FROM LOOKUPS WHERE word_key = ?", [word_key])
                 usages = c.fetchone()
-                if usages:
-                    usage = usages[0]
-                    usage = usage.replace(word, f"<b>{word}</b>")
-                    usage = usage.replace(";", ",")
-                    self.usages.append(usage)
-                else:
-                    self.usages.append(None)
+                self.usages.append(usages[0] if usages else None)
             else:
                 self.usages.append(" ")
             if self.doTranslate:
@@ -92,8 +80,8 @@ class KindleImporter():
                     self.translated.append(
                         self.translator.translate(
                             source=word,
-                            to_lang=self.target_language,
-                            from_lang=os.environ["TRANSLATE_FROM_LANGUAGE"]))
+                            to_lang=self.to_lang,
+                            from_lang=self.from_lang))
                 except ValueError:
                     self.translated.append(None)
             else:
@@ -106,12 +94,17 @@ class KindleImporter():
             return None
         path = os.path.join(tempfile.gettempdir(), "kind2anki_temp.txt")
         with codecs.open(path, "w", encoding="utf-8") as f:
+            # importer sets number of field by first line, so:
+            f.write("word;usage;transcription;translations\n")
             for w, translated, u in zip(self.words, self.translated, self.usages):
                 if translated:
-                    ankirow = self.to_anki_line(w, translated, u)
-                    f.write(ankirow)
+                    f.write(self.to_anki_line(w, translated, u))
         return path
 
     @staticmethod
-    def to_anki_line(word: str, translated, usage: str) -> str:
-        return f'{word};{usage or translated.ex};{translated.ts};{";".join(translated.tr)};\n'
+    def to_anki_line(word: str, t: [], usage: str) -> str:
+        usage = usage or t.ex
+        usage = usage.replace(";", ",")
+        usage = usage.replace(word, f"<b>{word}</b>")
+        return f'{word};{usage};{t.ts};{", ".join(t.tr)}\n'
+
