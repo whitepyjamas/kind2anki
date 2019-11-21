@@ -16,31 +16,31 @@
   </property>
   <layout class="QVBoxLayout">
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="group_box_content">
      <property name="title">
       <string>Kind2anki options</string>
      </property>
-     <layout class="QVBoxLayout" name="toplayout">
+     <layout class="QVBoxLayout" name="top_layout">
       <item>
-       <layout class="QGridLayout" name="gridLayout_2">
+       <layout class="QGridLayout" name="grid_layout_model_deck">
         <property name="sizeConstraint">
          <enum>QLayout::SetFixedSize</enum>
         </property>
         <item row="0" column="1">
-         <widget class="QWidget" name="cardArea" native="true"/>
+         <widget class="QWidget" name="model_area" native="true"/>
         </item>
         <item row="0" column="0">
-         <widget class="QLabel" name="label_card">
+         <widget class="QLabel" name="label_model">
           <property name="text">
            <string>Card</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QWidget" name="deckArea" native="true"/>
+         <widget class="QWidget" name="deck_area" native="true"/>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="label_deck">
           <property name="text">
            <string>Deck</string>
           </property>
@@ -49,7 +49,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QComboBox" name="importMode">
+       <widget class="QComboBox" name="import_mode">
         <item>
          <property name="text">
           <string>Update existing notes when first field matches</string>
@@ -68,7 +68,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QGridLayout" name="gridLayout">
+       <layout class="QGridLayout" name="grid_layout">
         <item row="1" column="0">
          <widget class="QLabel" name="label">
           <property name="sizePolicy">
@@ -83,7 +83,7 @@
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QCheckBox" name="includeUsage">
+         <widget class="QCheckBox" name="include_usage">
           <property name="text">
            <string>Include usage example</string>
           </property>
@@ -93,7 +93,7 @@
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="label_3">
+         <widget class="QLabel" name="label_import_days">
           <property name="minimumSize">
            <size>
             <width>169</width>
@@ -106,7 +106,7 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QSpinBox" name="importDays">
+         <widget class="QSpinBox" name="import_days">
           <property name="minimum">
            <number>1</number>
           </property>
@@ -119,14 +119,14 @@
          </widget>
         </item>
         <item row="2" column="2">
-         <widget class="QLabel" name="label_4">
+         <widget class="QLabel" name="label_days">
           <property name="text">
            <string>days</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1" colspan="2">
-         <widget class="QComboBox" name="languageSelect">
+         <widget class="QComboBox" name="language_select">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -175,7 +175,7 @@
          </widget>
         </item>
         <item row="0" column="1" colspan="2">
-         <widget class="QCheckBox" name="doTranslate">
+         <widget class="QCheckBox" name="do_translate">
           <property name="text">
            <string>Translate words</string>
           </property>
@@ -190,7 +190,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <widget class="QDialogButtonBox" name="button_box_standard_buttons">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -202,37 +202,37 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>buttonBox</tabstop>
+  <tabstop>button_box_standard_buttons</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>button_box_standard_buttons</sender>
    <signal>accepted()</signal>
    <receiver>kind2ankiDialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="source_label">
      <x>248</x>
      <y>254</y>
     </hint>
-    <hint type="destinationlabel">
+    <hint type="destination_label">
      <x>157</x>
      <y>274</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>button_box_standard_buttons</sender>
    <signal>rejected()</signal>
    <receiver>kind2ankiDialog</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="source_label">
      <x>316</x>
      <y>260</y>
     </hint>
-    <hint type="destinationlabel">
+    <hint type="destination_label">
      <x>286</x>
      <y>274</y>
     </hint>

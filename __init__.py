@@ -98,16 +98,16 @@ class Kind2AnkiDialog(QDialog):
         self.t.startProgress.connect(startProgressBar)
 
         b = QPushButton(_("Import"))
-        self.frm.buttonBox.addButton(b, QDialogButtonBox.AcceptRole)
+        self.frm.button_box_standard_buttons.addButton(b, QDialogButtonBox.AcceptRole)
         self.model_chooser = ModelChooser(
-            self.mw, self.frm.cardArea, label=False)
+            self.mw, self.frm.model_area, label=False)
         self.deck = DeckChooser(
-            self.mw, self.frm.deckArea, label=False)
-        self.frm.importMode.setCurrentIndex(
+            self.mw, self.frm.deck_area, label=False)
+        self.frm.import_mode.setCurrentIndex(
                     self.mw.pm.profile.get('importMode', 1))
 
         self.daysSinceLastRun = self.getDaysSinceLastRun()
-        self.frm.importDays.setValue(self.daysSinceLastRun)
+        self.frm.import_days.setValue(self.daysSinceLastRun)
         self.rejected.connect(self.cleanup)
 
         self.exec_()
@@ -117,10 +117,10 @@ class Kind2AnkiDialog(QDialog):
             db_path = getDBPath()
             self.writeCurrentTimestampToFile()  # update lastRun timestamp
 
-            target_language = self.frm.languageSelect.currentText()
-            includeUsage = self.frm.includeUsage.isChecked()
-            doTranslate = self.frm.doTranslate.isChecked()
-            importDays = self.frm.importDays.value()
+            target_language = self.frm.language_select.currentText()
+            includeUsage = self.frm.include_usage.isChecked()
+            doTranslate = self.frm.do_translate.isChecked()
+            importDays = self.frm.import_days.value()
 
             #if doTranslate:
             #    showInfo("Translating words from database, it can take a while...")
@@ -149,7 +149,7 @@ class Kind2AnkiDialog(QDialog):
         self.importer = TextImporter(self.mw.col, str(temp_file_path))
         self.importer.initMapping()
         self.importer.allowHTML = True
-        self.importer.importMode = self.frm.importMode.currentIndex()
+        self.importer.importMode = self.frm.import_mode.currentIndex()
         self.mw.pm.profile['importMode'] = self.importer.importMode
         self.importer.delimiter = ';'
 
