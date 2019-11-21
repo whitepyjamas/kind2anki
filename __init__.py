@@ -1,6 +1,7 @@
 # coding=utf-8
 # anki stuff import
 from aqt.deckchooser import DeckChooser
+from aqt.modelchooser import ModelChooser
 from aqt import mw
 from aqt.utils import showInfo, getFile, showText
 from aqt.qt import *
@@ -60,15 +61,13 @@ class ThreadTranslate(QThread):
         temp_file_path = kindleImporter.createTemporaryFile()
         self.done.emit(self.dialog, temp_file_path)
 
-
 # moved from class beacause it cannot work as a slot :(
 def importToAnki(dialog, temp_file_path):
     mw.progress.finish()
     if temp_file_path is not None:
         mw.progress.start(immediate=True, label="Importing...")
-        dialog.setupImporter(temp_file_path)
         dialog.selectDeck()
-
+        dialog.setupImporter(temp_file_path)
         dialog.importer.run()
         mw.progress.finish()
 
@@ -100,6 +99,8 @@ class Kind2AnkiDialog(QDialog):
 
         b = QPushButton(_("Import"))
         self.frm.buttonBox.addButton(b, QDialogButtonBox.AcceptRole)
+        self.model_chooser = ModelChooser(
+            self.mw, self.frm.cardArea, label=False)
         self.deck = DeckChooser(
             self.mw, self.frm.deckArea, label=False)
         self.frm.importMode.setCurrentIndex(
@@ -107,6 +108,7 @@ class Kind2AnkiDialog(QDialog):
 
         self.daysSinceLastRun = self.getDaysSinceLastRun()
         self.frm.importDays.setValue(self.daysSinceLastRun)
+        self.rejected.connect(self.cleanup)
 
         self.exec_()
 
@@ -140,6 +142,7 @@ class Kind2AnkiDialog(QDialog):
             showInfo("Selected file is not a DB")
         finally:
             self.close()
+            self.cleanup()
             self.mw.reset()
 
     def setupImporter(self, temp_file_path):
@@ -151,11 +154,11 @@ class Kind2AnkiDialog(QDialog):
         self.importer.delimiter = ';'
 
     def selectDeck(self):
-        did = self.deck.selectedId()
-        if did != self.importer.model['did']:
-            self.importer.model['did'] = did
-            self.mw.col.models.save(self.importer.model)
-        self.mw.col.decks.select(did)
+        deckid = self.deck.selectedId()
+        models = self.mw.col.models
+        models.current()['did'] = deckid
+        models.save(models.current())
+        self.mw.col.decks.select(deckid)
 
     def getDaysSinceLastRun(self):
         path = self.getLastRunFilePath()
@@ -182,6 +185,9 @@ class Kind2AnkiDialog(QDialog):
     def getLastRunFilePath(self):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         return os.path.join(dir_path, "lastRun.txt")
+
+    def cleanup(self):
+        self.model_chooser.cleanup()
 
 
 def getDBPath():

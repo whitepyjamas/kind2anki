@@ -27,9 +27,19 @@
          <enum>QLayout::SetFixedSize</enum>
         </property>
         <item row="0" column="1">
-         <widget class="QWidget" name="deckArea" native="true"/>
+         <widget class="QWidget" name="cardArea" native="true"/>
         </item>
         <item row="0" column="0">
+         <widget class="QLabel" name="label_card">
+          <property name="text">
+           <string>Card</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QWidget" name="deckArea" native="true"/>
+        </item>
+        <item row="1" column="0">
          <widget class="QLabel" name="label_2">
           <property name="text">
            <string>Deck</string>
