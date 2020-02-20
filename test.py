@@ -14,8 +14,11 @@ sys.path.insert(0, os.path.join(dir, "kind2anki", "libs"))
 from libs.textblob.translate import Translator
 
 translator = Translator(os.environ["YANDEX_API_KEY"])
-print(translator.translate('home', 'en', 'ru'))
+translated = translator.translate('home', 'en', 'ru')
 
+assert str(translated) == "ts: həʊm tr: ['домашний', 'родина', 'домой'] ex: home telephone number"
+
+print("Translation OK 👍")
 
 # {'def': [{'pos': 'adjective',
 #           'text': 'home',
